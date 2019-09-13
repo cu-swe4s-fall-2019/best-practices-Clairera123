@@ -1,15 +1,27 @@
-import sys, math
+import sys
+import math
+import argparse
 
-file_name = sys.argv[1]
-col_num = int(sys.argv[2])
+parser = argparse.ArgumentParser(description='Using argparse correctly',
+                                 prog='get_column_stats')
 
-f = open(file_name, 'r')
+parser.add_argument('file_name',
+                    type=str,
+                    help='number column')
+
+parser.add_argument('column_number',
+                    type=int,
+                    help='column of number')
+
+args = parser.parse_args()
+
+f = open(args.file_name, 'r')
 
 V = []
 
 for l in f:
     A = [int(x) for x in l.split()]
-    V.append(A[col_num])
+    V.append(A[args.column_number])
 
 mean = sum(V)/len(V)
 
@@ -17,3 +29,20 @@ stdev = math.sqrt(sum([(mean-x)**2 for x in V]) / len(V))
 
 print('mean:', mean)
 print('stdev:', stdev)
+
+try:
+    f = open(args.file_name, 'r')
+except FileNotFoundError:
+    print('Could not find' + args.file_name)
+except PermissionError:
+    print('Could not open' + args.file_name)
+
+
+try:
+    args.column_number = str
+except ValueError:
+    print('Insert integer')
+
+
+f = append_to_file('no_file.txt')
+f = append_to_file('no_read_permission.txt')
