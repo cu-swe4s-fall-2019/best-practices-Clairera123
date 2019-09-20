@@ -1,48 +1,74 @@
 import sys
+import os
 import math
 import argparse
 
-parser = argparse.ArgumentParser(description='Using argparse correctly',
-                                 prog='get_column_stats')
 
-parser.add_argument('file_name',
-                    type=str,
-                    help='number column')
+def calc_mean(data_set):
+    """ Calculate the mean of a column in an array.
 
-parser.add_argument('column_number',
-                    type=int,
-                    help='column of number')
+    Arguments
+    ---------
+    data_set: single column of integers
 
-args = parser.parse_args()
+    Returns
+    -------
+    mean: mean
+    """
+ 
+    mean = sum(data_set)/len(data_set)
+    print('mean:', mean)
+    return(mean)
 
-f = open(args.file_name, 'r')
+def calc_stdev(data_set):
+    """ Calculate the standard deviation of a column in an array
 
-V = []
+    Arguments
+    ---------
+    data_set: single column of integers
 
-for l in f:
-    A = [int(x) for x in l.split()]
-    V.append(A[args.column_number])
+    Returns
+    -------
+    stdev: stdev
+    """
 
-mean = sum(V)/len(V)
+    stdev = math.sqrt(sum([(mean-x)**2 for x in V]) / len(V))
+    print('stdev:', stdev)
+    return(stdev) 
 
-stdev = math.sqrt(sum([(mean-x)**2 for x in V]) / len(V))
+def main():
+    
+    parser = argparse.ArgumentParser(
+                description='input file and column of interest, returns mean and stdev',
+                prog='arg')
 
-print('mean:', mean)
-print('stdev:', stdev)
+    parser.add_argument('file_name',
+                        type=str,
+                        help='Name of file',
+                        required=True)
 
-try:
-    f = open(args.file_name, 'r')
-except FileNotFoundError:
-    print('Could not find' + args.file_name)
-except PermissionError:
-    print('Could not open' + args.file_name)
+    parser.add_argument('column_number',
+                        type=int,
+                        help='column of interest',
+                        required=True)
 
+    args = parser.parse_args()
 
-try:
-    args.column_number = str
-except ValueError:
-    print('Insert integer')
+    V=[]
 
+    try:
+        f = open(args.file_name, 'r')
+    except FileNotFoundError:
+        print('Could not find' + args.file_name)
+        sys.exit(1)
+    except PermissionError:
+        print('Could not open' + args.file_name)
+        sys.exit(1)
 
-f = append_to_file('no_file.txt')
-f = append_to_file('no_read_permission.txt')
+    a = calc_mean(V)
+    b = calc_stdev(V)
+    print(a) 
+    print(b)
+
+if __name__ == '__main__':
+    main()

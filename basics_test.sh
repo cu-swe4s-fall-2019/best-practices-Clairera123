@@ -2,12 +2,13 @@
 
 test -e ssshtest || wget -q https://raw.githubusercontent.com/ryanlayer/ssshtest/master/ssshtest. ssshtest
 
-run basic_mean pycodestyle style.py mean 1 3
-assert_in_stdout 2
+#test style guides
+run test_style pycodestyle style.py
+assert_in_stdout 
 assert_exit_code 0 
 
-run basic_stdev pycodestyle get_column_stats.py stdev 1 1
-assert_in_stdout 0
+run basic_stdev pycodestyle get_column_stats.py 
+assert_in_stdout 
 assert_exit_code 0
 
 (for i in `seq 1 100` do 
@@ -15,7 +16,11 @@ assert_exit_code 0
     done ) > data.txt
 
 
-python get_column_stats.py data.txt 2
+run test_random_file python get_column_stats.py --f data.txt --c 1
+assert_exit_code 0 
+assert_stdout
+assert_in_stdout "mean:"
+assert_in_stdout "stdev:"
 
 
 V=1
@@ -23,6 +28,18 @@ V=1
     echo -e "$V\t$V\t$V\t$V\t$V"
 done ) > data.txt
 
-python get_column_stats.py data.txt 2
+run test_one python get_column_stats.py --f data.txt --c 1 
+assert_exit_code 0 
+assert_stdout
+assert_in_stdout "mean: 1.0"
+assert_in_stdout "stdev: 0.0"
 
-assert_exit_code 0
+run no_file_name_test python get_column_stats.py --f wrong.txt --c 1
+assert_exit_code 1 
+assert_stdout
+assert_in_stdout "FileNotFoundError" 
+
+run str_instead_of_int_test python get_column_stats.py --f data.txt --c a
+assert_exit_code 1
+assert_stdout
+assert_in_stdout "ValueError"
